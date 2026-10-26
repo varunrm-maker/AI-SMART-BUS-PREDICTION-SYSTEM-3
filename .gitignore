@@ -1,0 +1,8 @@
+# Local runtime & temp files
+*.zip
+download_git.ps1
+setup_git_repo.ps1
+__pycache__/
+*.pyc
+.env
+node_modules/

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartBus AI – Unit Testing & Quality Verification Suite</title>
+  
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            slate: {
+              850: '#151f32',
+              900: '#0f172a',
+              950: '#070b14',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070b14;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 40%);
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="p-6 md:p-10 font-sans">
+  <div class="max-w-5xl mx-auto space-y-6">
+    
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-6 border-b border-slate-800">
+      <div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+            <i class="fas fa-flask-vial text-lg"></i>
+          </div>
+          <div>
+            <h1 class="text-2xl font-extrabold text-white tracking-tight">SmartBus AI Test Runner</h1>
+            <p class="text-xs text-slate-400">Core Algorithm Assertions, Boundary Conditions & Storage Verification</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700/80 transition-colors flex items-center gap-2">
+          <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+        <button id="btn-rerun" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-indigo-600/20">
+          <i class="fas fa-rotate-right"></i> Run Tests
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="glass-panel p-4 rounded-2xl">
+        <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Total Tests</span>
+        <div id="stat-total" class="text-2xl font-extrabold text-white mt-1">-</div>
+      </div>
+      <div class="glass-panel p-4 rounded-2xl border-emerald-500/20 bg-emerald-500/5">
+        <span class="text-[10px] text-emerald-400 uppercase font-semibold tracking-wider">Passed</span>
+        <div id="stat-passed" class="text-2xl font-extrabold text-emerald-400 mt-1">-</div>
+      </div>
+      <div class="glass-panel p-4 rounded-2xl border-rose-500/20 bg-rose-500/5">
+        <span class="text-[10px] text-rose-400 uppercase font-semibold tracking-wider">Failed</span>
+        <div id="stat-failed" class="text-2xl font-extrabold text-rose-400 mt-1">0</div>
+      </div>
+      <div class="glass-panel p-4 rounded-2xl">
+        <span class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Duration</span>
+        <div id="stat-duration" class="text-2xl font-extrabold text-indigo-300 mt-1">-</div>
+      </div>
+    </div>
+
+    <!-- Overall Status Banner -->
+    <div id="status-banner" class="p-4 rounded-2xl glass-panel flex items-center justify-between border">
+      <!-- Injected by script -->
+    </div>
+
+    <!-- Detailed Test Results List -->
+    <div class="glass-panel rounded-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <h2 class="text-sm font-bold text-white uppercase tracking-wider">Executed Test Assertions</h2>
+        <span class="text-xs text-slate-400">Environment: In-Browser Sandboxed DOM</span>
+      </div>
+      <div id="test-results-container" class="space-y-2.5">
+        <!-- Injected by script -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Dependencies -->
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/map.js"></script>
+  <script src="unit_tests.js"></script>
+
+  <script>
+    function executeAndRenderTests() {
+      const resultsData = TestRunner.run();
+
+      document.getElementById('stat-total').textContent = resultsData.total;
+      document.getElementById('stat-passed').textContent = resultsData.passed;
+      document.getElementById('stat-failed').textContent = resultsData.failed;
+      document.getElementById('stat-duration').textContent = `${resultsData.durationMs} ms`;
+
+      const banner = document.getElementById('status-banner');
+      if (resultsData.failed === 0) {
+        banner.className = "p-4 rounded-2xl glass-panel flex items-center justify-between border border-emerald-500/40 bg-emerald-500/10";
+        banner.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+              <i class="fas fa-check"></i>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-emerald-300">All ${resultsData.total} Unit Test Assertions Passed Successfully</div>
+              <div class="text-[11px] text-emerald-400/80">Crowd algorithm boundaries, interpolation math, and persistence layers verified.</div>
+            </div>
+          </div>
+          <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-bold rounded-lg border border-emerald-500/30">100% PASS</span>
+        `;
+      } else {
+        banner.className = "p-4 rounded-2xl glass-panel flex items-center justify-between border border-rose-500/40 bg-rose-500/10";
+        banner.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold">
+              <i class="fas fa-xmark"></i>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-rose-300">${resultsData.failed} Test(s) Encountered Failures</div>
+              <div class="text-[11px] text-rose-400/80">Review diagnostic failure details below.</div>
+            </div>
+          </div>
+          <span class="px-3 py-1 bg-rose-500/20 text-rose-300 text-xs font-bold rounded-lg border border-rose-500/30">FAILED</span>
+        `;
+      }
+
+      const container = document.getElementById('test-results-container');
+      container.innerHTML = resultsData.results.map((r, idx) => {
+        const isPass = r.status === 'PASSED';
+        return `
+          <div class="p-3 bg-slate-900/60 rounded-xl border ${isPass ? 'border-slate-800' : 'border-rose-500/40 bg-rose-500/5'} flex items-start justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-lg ${isPass ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/20 text-rose-400 border border-rose-500/30'} flex items-center justify-center text-xs shrink-0 mt-0.5">
+                <i class="fas ${isPass ? 'fa-check' : 'fa-xmark'}"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 bg-slate-800 text-[10px] font-mono font-semibold text-indigo-400 rounded">${r.suite}</span>
+                  <span class="text-xs font-bold text-white">${r.name}</span>
+                </div>
+                ${!isPass ? `<div class="text-[11px] text-rose-400 font-mono mt-1">${r.error}</div>` : ''}
+              </div>
+            </div>
+            <span class="text-[10px] font-mono font-bold ${isPass ? 'text-emerald-400' : 'text-rose-400'}">
+              ${r.status}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', executeAndRenderTests);
+    document.getElementById('btn-rerun').addEventListener('click', executeAndRenderTests);
+  </script>
+</body>
+</html>
